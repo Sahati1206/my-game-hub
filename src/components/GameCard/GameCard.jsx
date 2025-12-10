@@ -58,7 +58,17 @@ const GameCard = ({ game }) => {
   const titleColor = isThumbLight ? '#071226' : '#ffffff';
   const accentRgb = hexToRgb(accentColor.replace('#','')) || null;
   const accentGlow = accentRgb ? `rgba(${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}, 0.30)` : 'rgba(6, 182, 212, 0.20)';
-  const prefersReduced = useReducedMotion();
+  // Detect system reduced-motion preference (production-ready)
+  const systemPrefersReduced = typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    : false;
+
+  // TEMP: Force animations ON for visual testing. Remove after testing.
+  const prefersReduced = false;  // TEMP: Force animations ON (remove after testing)
+  // For production, switch to the system preference by uncommenting below:
+  // const prefersReduced = systemPrefersReduced;
+  const decoSpring = { type: 'spring', stiffness: 150, damping: 19, mass: 0.9 };
+
   const renderDecoration = (id, isHovered) => {
     const colors = (key) => {
       switch(key) {
@@ -82,252 +92,212 @@ const GameCard = ({ game }) => {
     switch(id) {
       case 'snake':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <defs>
               <linearGradient id={`gc-sgrad-${game.id}`} x1="0%" x2="100%">
-                <stop offset="0%" stopColor={pal.primary}>
-                  {!prefersReduced && <animate attributeName="offset" values="0;1;0" dur="2.8s" repeatCount="indefinite" />}
-                </stop>
-                <stop offset="50%" stopColor={pal.secondary}>
-                  {!prefersReduced && <animate attributeName="offset" values="0.25;0.75;0.25" dur="2.8s" repeatCount="indefinite" />}
-                </stop>
-                <stop offset="100%" stopColor={pal.primary}>
-                  {!prefersReduced && <animate attributeName="offset" values="1;0;1" dur="2.8s" repeatCount="indefinite" />}
-                </stop>
+                <stop offset="0%" stopColor={pal.primary} />
+                <stop offset="50%" stopColor={pal.secondary} />
+                <stop offset="100%" stopColor={pal.primary} />
               </linearGradient>
             </defs>
-            {/* border wrap with animated gradient */}
-            <rect x="6" y="6" width="288" height="168" rx="12" fill="none" stroke={`url(#gc-sgrad-${game.id})`} strokeWidth="6" opacity="0.95" />
-            {/* decorative slithering body (animated dash offset + gradient) */}
-            <path d="M18 120 C60 60, 120 60, 162 120 C204 180, 246 180, 282 120" fill="none" stroke={`url(#gc-sgrad-${game.id})`} strokeWidth="10" strokeLinecap="round" strokeDasharray="16 10">
-              {!prefersReduced && <animate attributeName="stroke-dashoffset" values="0;-140" dur="1.8s" repeatCount="indefinite" />}
-            </path>
-            {/* head at top-left */}
+            <motion.path
+              d="M18 120 C60 60, 120 60, 162 120 C204 180, 246 180, 282 120"
+              fill="none"
+              stroke={`url(#gc-sgrad-${game.id})`}
+              strokeWidth="10"
+              strokeLinecap="round"
+              strokeDasharray="16 10"
+              initial={{ strokeDashoffset: 0 }}
+              animate={ !prefersReduced && isHovered ? { strokeDashoffset: -140 } : { strokeDashoffset: 0 } }
+              transition={ !prefersReduced && isHovered ? { duration: 1.2, ease: 'linear', repeat: Infinity, repeatType: 'loop' } : { duration: 0.6, ease: 'easeOut' } }
+            />
             <ellipse cx="30" cy="18" rx="8" ry="6" fill={pal.primary} transform="rotate(-12 30 18)" />
             <circle cx="34" cy="16" r="1.2" fill="#071226" />
-            {/* apple that moves toward snake when hovered */}
-            <g transform="translate(220,110)">
-              <circle cx={isHovered ? 14 : 28} cy="-40" r="8" fill="#ef4444">
-                {!prefersReduced && (
-                  <animate attributeName="cx" dur={isHovered ? '0.9s' : '2.2s'} values={isHovered ? '28;14' : '28;26;28'} repeatCount="indefinite" />
-                )}
-              </circle>
-            </g>
-          </svg>
+            <motion.g transform="translate(220,110)">
+              <motion.circle
+                cx={28}
+                cy={-40}
+                r={8}
+                fill="#ef4444"
+                animate={ !prefersReduced && isHovered ? { cx: [28, 20, 14, 20, 28] } : { cx: 28 } }
+                transition={ !prefersReduced && isHovered ? { duration: 1.6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }
+              />
+            </motion.g>
+          </motion.svg>
         );
       case 'blackjack':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
-            <g transform="translate(170,8)">
-              <g transform="rotate(-8 32 54)">
-                <rect x="0" y="6" width="64" height="96" rx="6" fill={pal.primary} opacity="0.08">
-                  {!prefersReduced && <animate attributeName="opacity" values="0.04;0.12;0.04" dur="2.4s" repeatCount="indefinite" />}
-                </rect>
-              </g>
-              <g transform="rotate(6 42 48)">
-                <rect x="10" y="0" width="64" height="96" rx="6" fill={pal.primary} opacity="0.12">
-                  {!prefersReduced && <animate attributeName="transform" attributeType="XML" type="translate" values="0 0;0 -4;0 0" dur="1.8s" repeatCount="indefinite" />}
-                </rect>
-              </g>
-              <text x="42" y="46" fontSize="14" fill={pal.secondary} fontWeight="700" textAnchor="middle">A♠</text>
-            </g>
-          </svg>
+            <motion.rect x="20" y="60" width="60" height="90" rx="6" fill={pal.primary} opacity="0.95"
+              animate={ !prefersReduced && isHovered ? { rotate: [0, 5, 0] } : { rotate: 0 } }
+              transition={ !prefersReduced && isHovered ? { duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
+              <text x="30" y="45" fontSize="12" fill="#000" textAnchor="middle">K♠</text>
+            </motion.rect>
+            <motion.rect x="100" y="60" width="60" height="90" rx="6" fill={pal.secondary} opacity="0.95"
+              initial={{ opacity: 0 }}
+              animate={ !prefersReduced && isHovered ? { opacity: [0, 1, 1] } : { opacity: 0 } }
+              transition={ !prefersReduced && isHovered ? { delay: 1, duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
+              <text x="30" y="45" fontSize="12" fill="#000" textAnchor="middle">K♥</text>
+            </motion.rect>
+            <text x="90" y="160" fontSize="16" fill="#fff" textAnchor="middle">20</text>
+          </motion.svg>
         );
       case 'rock-paper-scissors':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
-            {/* Left rock */}
-            <circle cx="60" cy="56" r="22" fill={pal.primary} opacity="0.95">
-              {!prefersReduced && <animate attributeName="r" values="20;24;20" dur="1.6s" repeatCount="indefinite" />}
-            </circle>
-            {/* Right simple scissors */}
-            <g transform="translate(180,36) rotate(6)">
-              <rect x="0" y="18" width="56" height="8" rx="4" fill={pal.secondary} transform="rotate(18 28 22)">
-                {!prefersReduced && <animate attributeName="transform" attributeType="XML" type="rotate" values="18 28 22;22 28 22;18 28 22" dur="1.6s" repeatCount="indefinite" />}
-              </rect>
-              <rect x="0" y="18" width="56" height="8" rx="4" fill={pal.secondary} transform="rotate(-18 28 22)">
-                {!prefersReduced && <animate attributeName="transform" attributeType="XML" type="rotate" values="-18 28 22;-22 28 22;-18 28 22" dur="1.6s" repeatCount="indefinite" />}
-              </rect>
-              <circle cx="28" cy="22" r="4" fill="#6d28d9" />
-            </g>
-          </svg>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+            <motion.path d="M60 90 Q70 70 80 90 M80 90 Q70 110 60 90" stroke={pal.primary} strokeWidth="4" fill="none"
+              animate={ !prefersReduced && isHovered ? { scale: [1, 1.1, 1] } : { scale: 1 } }
+              transition={ !prefersReduced && isHovered ? { duration: 1.5, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+            <motion.path d="M200 90 L220 70 L240 90 L220 110 Z" stroke={pal.secondary} strokeWidth="4" fill="none"
+              animate={ !prefersReduced && isHovered ? { scale: [1, 1.1, 1] } : { scale: 1 } }
+              transition={ !prefersReduced && isHovered ? { duration: 1.5, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+          </motion.svg>
         );
       case 'box-dodger':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
-            <g>
-              <rect x="12" y="18" width="20" height="20" rx="3" fill={pal.primary} transform="rotate(-14 22 28)">
-                {!prefersReduced && <animate attributeName="y" values="18;8;18" dur="1.6s" repeatCount="indefinite" />}
-              </rect>
-              <rect x="44" y="6" width="22" height="22" rx="3" fill={pal.secondary} transform="rotate(6 55 17)">
-                {!prefersReduced && <animate attributeName="y" values="6;16;6" dur="1.2s" repeatCount="indefinite" />}
-              </rect>
-              <rect x="76" y="36" width="24" height="24" rx="3" fill="#f59e0b" transform="rotate(-6 88 48)">
-                {!prefersReduced && <animate attributeName="y" values="36;26;36" dur="1.8s" repeatCount="indefinite" />}
-              </rect>
-            </g>
-          </svg>
+            <motion.rect x="50" y="0" width="20" height="20" rx="3" fill={pal.primary}
+              animate={ !prefersReduced && isHovered ? { y: [0, 160] } : { y: 0 } }
+              transition={ !prefersReduced && isHovered ? { duration: 3, repeat: Infinity, ease: 'linear', repeatType: 'loop' } : decoSpring } />
+            <motion.rect x="100" y="0" width="20" height="20" rx="3" fill={pal.secondary}
+              animate={ !prefersReduced && isHovered ? { y: [0, 160] } : { y: 0 } }
+              transition={ !prefersReduced && isHovered ? { delay: 0.5, duration: 2.5, repeat: Infinity, ease: 'linear', repeatType: 'loop' } : decoSpring } />
+            <motion.rect x="150" y="0" width="20" height="20" rx="3" fill="#f59e0b"
+              animate={ !prefersReduced && isHovered ? { y: [0, 160] } : { y: 0 } }
+              transition={ !prefersReduced && isHovered ? { delay: 1, duration: 2, repeat: Infinity, ease: 'linear', repeatType: 'loop' } : decoSpring } />
+          </motion.svg>
         );
       case 'clicker-hero':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
-            <g transform="translate(16,12)">
-              <circle cx="40" cy="40" r="26" fill={pal.primary} opacity="0.95">
-                {!prefersReduced && <animate attributeName="r" values="22;28;22" dur="1s" repeatCount="indefinite" />}
-              </circle>
-              <text x="40" y="46" fontSize="20" fontWeight="800" fill="#fff" textAnchor="middle">
+            <motion.g transform="translate(16,12)">
+              <motion.circle cx="40" cy="40" r={26} fill={pal.primary} opacity={0.95}
+                animate={ !prefersReduced && isHovered ? { r: [26, 28, 26] } : { r: 26 } }
+                transition={ !prefersReduced && isHovered ? { duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : { duration: 0.6 } }
+              />
+              <motion.text x="40" y={ !prefersReduced && isHovered ? [36, 46, 36] : 46 } fontSize="20" fontWeight="800" fill="#fff" textAnchor="middle"
+                transition={ !prefersReduced && isHovered ? { duration: 1.2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }
+              >
                 <tspan>+1</tspan>
-                {!prefersReduced && <animate attributeName="y" values="46;36;46" dur="1s" repeatCount="indefinite" />}
-              </text>
+              </motion.text>
               <g transform="translate(100,20)" opacity="0.85">
                 <rect x="0" y="0" width="18" height="18" rx="4" fill={pal.secondary} />
                 <rect x="10" y="10" width="18" height="18" rx="4" fill="#34d399" />
               </g>
-            </g>
-          </svg>
+            </motion.g>
+            <motion.path d="M100 100 L110 90 L120 100" stroke="#fff" strokeWidth="4" fill="none"
+              animate={ !prefersReduced && isHovered ? { y: [0, 10, 0], scale: [1, 1.2, 1] } : { y: 0, scale: 1 } }
+              transition={ !prefersReduced && isHovered ? { duration: 0.5, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+          </motion.svg>
         );
       case 'memory-card':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
-            <g transform="translate(16,12)">
-              <g>
-                <rect x="0" y="0" width="44" height="62" rx="6" fill={pal.primary} />
-                {!prefersReduced && <animateTransform attributeName="transform" attributeType="XML" type="translate" values="0 0;0 -6;0 0" dur="1.8s" repeatCount="indefinite" />}
-              </g>
-              <g>
-                <rect x="34" y="6" width="44" height="62" rx="6" fill={pal.secondary} />
-                {!prefersReduced && <animateTransform attributeName="transform" attributeType="XML" type="translate" values="0 0;0 -4;0 0" dur="1.6s" repeatCount="indefinite" />}
-              </g>
-              <g>
-                <rect x="68" y="12" width="44" height="62" rx="6" fill="#60a5fa" />
-                {!prefersReduced && <animateTransform attributeName="transform" attributeType="XML" type="translate" values="0 0;0 -2;0 0" dur="1.4s" repeatCount="indefinite" />}
-              </g>
-            </g>
-          </svg>
+            <motion.g transform="translate(16,12)">
+              <motion.rect x="0" y={ !prefersReduced && isHovered ? [-6, 0, -6] : 0 } width="44" height="62" rx="6" fill={pal.primary} 
+                transition={ !prefersReduced && isHovered ? { duration: 1.5, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+              <motion.rect x="34" y={ !prefersReduced && isHovered ? [2, 6, 2] : 6 } width="44" height="62" rx="6" fill={pal.secondary} 
+                transition={ !prefersReduced && isHovered ? { duration: 1.7, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+              <motion.rect x="68" y={ !prefersReduced && isHovered ? [10, 12, 10] : 12 } width="44" height="62" rx="6" fill="#60a5fa" 
+                transition={ !prefersReduced && isHovered ? { duration: 1.3, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+            </motion.g>
+          </motion.svg>
         );
       case 'tic-tac-toe':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
-            <g opacity="0.12" fill={pal.primary}>
-              <text x="18" y="24" fontSize="24" fontWeight="800">X
-                {!prefersReduced && <animate attributeName="opacity" values="0.2;1;0.2" dur="2s" repeatCount="indefinite" />}
-              </text>
-              <text x="282" y="24" fontSize="24" fontWeight="800" textAnchor="end">O
-                {!prefersReduced && <animate attributeName="opacity" values="0.2;0.6;0.2" dur="1.6s" repeatCount="indefinite" />}
-              </text>
-              <text x="18" y="156" fontSize="24" fontWeight="800">O
-                {!prefersReduced && <animate attributeName="opacity" values="0.2;0.8;0.2" dur="1.8s" repeatCount="indefinite" />}
-              </text>
-              <text x="282" y="156" fontSize="24" fontWeight="800" textAnchor="end">X
-                {!prefersReduced && <animate attributeName="opacity" values="0.2;0.9;0.2" dur="2.2s" repeatCount="indefinite" />}
-              </text>
-            </g>
-          </svg>
+            <motion.g opacity={0.12} fill={pal.primary} animate={ !prefersReduced && isHovered ? { opacity: [0.12, 0.9, 0.12] } : { opacity: 0.12 } } 
+              transition={ !prefersReduced && isHovered ? { duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
+              <text x="18" y="24" fontSize="24" fontWeight="800">X</text>
+              <text x="282" y="24" fontSize="24" fontWeight="800" textAnchor="end">O</text>
+              <text x="18" y="156" fontSize="24" fontWeight="800">O</text>
+              <text x="282" y="156" fontSize="24" fontWeight="800" textAnchor="end">X</text>
+            </motion.g>
+          </motion.svg>
         );
       case 'hangman':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
             <g transform="translate(40,24)">
               <line x1="0" y1="110" x2="80" y2="110" stroke={pal.primary} strokeWidth="3" />
               <line x1="40" y1="110" x2="40" y2="10" stroke={pal.primary} strokeWidth="3" />
               <line x1="40" y1="10" x2="70" y2="10" stroke={pal.primary} strokeWidth="3" />
-              {/* head with subtle bounce; when hovered, swing the body to mimic guessing wrong */}
-              <g>
-                <circle cx="70" cy="22" r="6" fill={pal.primary}>
-                  {!prefersReduced && <animate attributeName="cy" values={isHovered ? '22;10;22' : '22;16;22'} dur={isHovered ? '1.1s' : '1.2s'} repeatCount="indefinite" />}
-                </circle>
-                {!prefersReduced && (
-                  <g>
-                    <line x1="70" y1="28" x2={isHovered ? '90' : '78'} y2={isHovered ? '56' : '50'} stroke={pal.primary} strokeWidth="3">
-                      <animate attributeName="x2" values={isHovered ? '90;74;90' : '78;82;78'} dur={isHovered ? '1.2s' : '1.8s'} repeatCount="indefinite" />
-                    </line>
-                  </g>
-                )}
-              </g>
+              <motion.circle cx="70" cy="22" r="6" fill={pal.primary} opacity={ !prefersReduced && isHovered ? { opacity: [0, 1] } : 1 } 
+                transition={ !prefersReduced && isHovered ? { delay: 0.5, duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+              <motion.line x1="70" y1="28" x2="70" y2="60" stroke={pal.primary} strokeWidth="3" opacity={ !prefersReduced && isHovered ? [0, 1] : 1 } 
+                transition={ !prefersReduced && isHovered ? { delay: 1, duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+              <motion.line x1="50" y1="40" x2="90" y2="40" stroke={pal.primary} strokeWidth="3" opacity={ !prefersReduced && isHovered ? [0, 1] : 1 } 
+                transition={ !prefersReduced && isHovered ? { delay: 1.5, duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+              <motion.line x1="60" y1="80" x2="70" y2="60" stroke={pal.primary} strokeWidth="3" opacity={ !prefersReduced && isHovered ? [0, 1] : 1 } 
+                transition={ !prefersReduced && isHovered ? { delay: 2, duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
+              <motion.line x1="80" y1="80" x2="70" y2="60" stroke={pal.primary} strokeWidth="3" opacity={ !prefersReduced && isHovered ? [0, 1] : 1 } 
+                transition={ !prefersReduced && isHovered ? { delay: 2.5, duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
             </g>
-          </svg>
+          </motion.svg>
         );
       case 'minesweeper':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
             <g transform="translate(18,18)">
               <rect x="0" y="0" width="28" height="28" rx="4" fill="#94a3b8" />
               <rect x="34" y="0" width="28" height="28" rx="4" fill={pal.primary} />
               <rect x="68" y="0" width="28" height="28" rx="4" fill="#60a5fa" />
-              <circle cx="82" cy="36" r="6" fill={pal.primary} opacity="0.9">
-                <animate attributeName="r" values="4;8;4" dur="1.2s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values="0.6;1;0.6" dur="1.2s" repeatCount="indefinite" />
-              </circle>
+              <motion.circle cx="82" cy="36" r={ !prefersReduced && isHovered ? [6, 8, 6] : 6 } fill={pal.primary} opacity={ !prefersReduced && isHovered ? [0.9, 1, 0.9] : 0.9 } 
+                transition={ !prefersReduced && isHovered ? { duration: 1.4, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring } />
             </g>
-          </svg>
+          </motion.svg>
         );
       case 'war-card-game':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
-            <g transform="translate(160,24)">
-              <g>
-                <rect x="0" y="10" width="56" height="80" rx="6" fill={pal.primary} opacity="0.08" transform="rotate(-6 28 50)">
-                  <animateTransform attributeName="transform" attributeType="XML" type="translate" values="0 0;4 0;0 0" dur="1.6s" repeatCount="indefinite" />
-                </rect>
-              </g>
-              <g>
-                <rect x="8" y="0" width="56" height="80" rx="6" fill={pal.primary} opacity="0.12" transform="rotate(6 36 40)">
-                  <animateTransform attributeName="transform" attributeType="XML" type="translate" values="0 0;-4 0;0 0" dur="1.8s" repeatCount="indefinite" />
-                </rect>
-              </g>
-            </g>
-          </svg>
+            <motion.g transform="translate(160,24)" animate={ !prefersReduced && isHovered ? { x: [0, 4, 0] } : { x: 0 } } 
+              transition={ !prefersReduced && isHovered ? { duration: 1.6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
+              <rect x="0" y="10" width="56" height="80" rx="6" fill={pal.primary} opacity="0.08" transform="rotate(-6 28 50)" />
+              <rect x="8" y="0" width="56" height="80" rx="6" fill={pal.primary} opacity="0.12" transform="rotate(6 36 40)" />
+            </motion.g>
+          </motion.svg>
         );
       case 'math-quiz':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
-            {/* show different equations on hover */}
-            {isHovered ? (
-              <>
-                <text x="18" y="36" fontSize="20" fontWeight="800" fill={pal.secondary}>8 × 7 =</text>
-                <rect x="110" y="16" width="48" height="34" rx="6" fill={pal.primary} opacity="0.95" />
-                <text x="134" y="40" fontSize="18" fontWeight="800" fill="#071226" textAnchor="middle">56</text>
-              </>
-            ) : (
-              <>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+            <motion.g initial={{ opacity: 1 }} animate={ !prefersReduced && isHovered ? { opacity: 1 } : { opacity: 1 }}>
+              <motion.g initial={{ x: 0, opacity: 1 }} animate={ !prefersReduced && isHovered ? { x: [0, -6, 0], opacity: [1, 0, 1] } : { x: 0, opacity: 1 } } 
+                transition={ !prefersReduced && isHovered ? { duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
                 <text x="18" y="36" fontSize="20" fontWeight="800" fill={pal.secondary}>7 × 6 =</text>
                 <rect x="110" y="16" width="48" height="34" rx="6" fill={pal.primary} opacity="0.95" />
                 <text x="134" y="40" fontSize="18" fontWeight="800" fill="#071226" textAnchor="middle">42</text>
-              </>
-            )}
-          </svg>
+              </motion.g>
+              <motion.g initial={{ x: 6, opacity: 0 }} animate={ !prefersReduced && isHovered ? { x: [6, 0, 6], opacity: [0, 1, 0] } : { x: 6, opacity: 0 } } 
+                transition={ !prefersReduced && isHovered ? { duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
+                <text x="18" y="36" fontSize="20" fontWeight="800" fill={pal.secondary}>8 × 7 =</text>
+                <rect x="110" y="16" width="48" height="34" rx="6" fill={pal.primary} opacity="0.95" />
+                <text x="134" y="40" fontSize="18" fontWeight="800" fill="#071226" textAnchor="middle">56</text>
+              </motion.g>
+            </motion.g>
+          </motion.svg>
         );
       case 'higher-lower':
         return (
-          <svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
+          <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
-            <g transform="translate(80,30)">
-              <g>
-                <rect x="0" y="0" width="64" height="96" rx="8" fill={pal.primary} opacity="0.12" transform="rotate(-8 32 48)">
-                  <animateTransform attributeName="transform" attributeType="XML" type="translate" values="0 0;6 -6;0 0" dur="1.8s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.06;0.16;0.06" dur="1.8s" repeatCount="indefinite" />
-                </rect>
-              </g>
-              <g>
-                <rect x="18" y="6" width="64" height="96" rx="8" fill={pal.secondary} opacity="0.14" transform="rotate(6 50 54)">
-                  <animateTransform attributeName="transform" attributeType="XML" type="translate" values="0 0;-6 6;0 0" dur="2.0s" repeatCount="indefinite" />
-                  <animate attributeName="opacity" values="0.04;0.14;0.04" dur="2.0s" repeatCount="indefinite" />
-                </rect>
-              </g>
-              <g transform="translate(34,20)">
+            <motion.g transform="translate(80,30)" animate={ !prefersReduced && isHovered ? { x: [0, 4, 0] } : { x: 0 } } 
+              transition={ !prefersReduced && isHovered ? { duration: 1.6, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
+              <rect x="0" y="0" width="64" height="96" rx="8" fill={pal.primary} opacity="0.12" transform="rotate(-8 32 48)" />
+              <rect x="18" y="6" width="64" height="96" rx="8" fill={pal.secondary} opacity="0.14" transform="rotate(6 50 54)" />
+              <motion.g transform="translate(34,20)" animate={ !prefersReduced && isHovered ? { y: [0, -4, 0] } : { y: 0 } } 
+                transition={ !prefersReduced && isHovered ? { duration: 1.4, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
                 <text x="18" y="34" fontSize="18" fontWeight="800" fill="#071226">?</text>
-                <animateTransform attributeName="transform" type="translate" values="0 0;0 -4;0 0" dur="1.2s" repeatCount="indefinite" />
-              </g>
-            </g>
-          </svg>
+              </motion.g>
+            </motion.g>
+          </motion.svg>
         );
       default:
         return null;
@@ -393,8 +363,11 @@ const GameCard = ({ game }) => {
   return (
     <Link to={`/game/${game.id}`} aria-label={`Open ${game.title} game`}>
       <motion.div
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setTilt({ rx: 0, ry: 0, tx: 0, ty: 0 }); }}
+        onHoverStart={() => {
+          setHovered(true);
+          try { if (game.componentKey) prefetchGame(game.componentKey); } catch (e) {}
+        }}
+        onHoverEnd={() => { setHovered(false); setTilt({ rx: 0, ry: 0, tx: 0, ty: 0 }); }}
         onMouseMove={(e) => {
           const rect = e.currentTarget.getBoundingClientRect();
           const cx = rect.left + rect.width / 2;
@@ -438,6 +411,7 @@ const GameCard = ({ game }) => {
           mixBlendMode: 'screen',
           filter: 'blur(12px)'
         }} />
+
         {/* Thumbnail / Left Section */}
         <div className="game-card-thumb" style={{ 
           overflow: 'hidden', 
@@ -447,16 +421,47 @@ const GameCard = ({ game }) => {
           alignItems: 'center',
           justifyContent: 'center'
         }}>
-          {/* Accent Line */}
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: accentColor, zIndex: 10 }}></div>
+          {/* Ultra-smooth animated top accent bar */}
+          <div style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0,
+            height: '5px',
+            background: accentColor,
+            zIndex: 10,
+            borderRadius: '2px 2px 0 0',
+            overflow: 'hidden',
+            opacity: hovered ? 1 : 0.6,
+          }}>
+            <motion.div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: `linear-gradient(90deg,
+                  transparent 0%,
+                  ${accentGlow.replace('0.30)', '0.8)')} 30%,
+                  white 50%,
+                  ${accentGlow.replace('0.30)', '0.8)')} 70%,
+                  transparent 100%
+                )`,
+                filter: 'blur(2px)',
+                opacity: 0.8,
+              }}
+              animate={{ x: ['-100%', '100%'] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+            />
+          </div>
           
           <div style={{ position: 'absolute', inset: 0, zIndex: 6, overflow: 'hidden' }}>
             <motion.img
               src={game.thumbnail}
               alt={game.title}
               loading="lazy"
-              animate={ !prefersReduced ? (hovered ? { scale: 1.12, x: tilt.tx / 6, y: tilt.ty / 6 } : { scale: 1, x: 0, y: 0 }) : { scale: 1 } }
-              transition={{ type: 'spring', stiffness: 160, damping: 20, mass: 0.85 }}
+              animate={hovered && !prefersReduced ? {
+                scale: 1.15,
+                y: -6,
+                x: tilt.tx * 0.5,
+              } : { scale: 1, y: 0, x: 0 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 22, mass: 1 }}
               style={{
                 width: '100%',
                 height: '100%',
