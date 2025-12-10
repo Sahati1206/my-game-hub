@@ -129,17 +129,24 @@ const GameCard = ({ game }) => {
         return (
           <motion.svg viewBox="0 0 300 180" preserveAspectRatio="xMidYMid meet" style={{ width: '100%', height: '100%' }}>
             <rect x="0" y="0" width="300" height="180" rx="0" fill="none" />
-            <motion.rect x="20" y="60" width="60" height="90" rx="6" fill={pal.primary} opacity="0.95"
+            <motion.g
+              transform="translate(20,60)"
+              transformOrigin="30px 45px"
               animate={ !prefersReduced && isHovered ? { rotate: [0, 5, 0] } : { rotate: 0 } }
-              transition={ !prefersReduced && isHovered ? { duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
+              transition={ !prefersReduced && isHovered ? { duration: 2, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }
+            >
+              <rect x="0" y="0" width="60" height="90" rx="6" fill={pal.primary} opacity="0.95" />
               <text x="30" y="45" fontSize="12" fill="#000" textAnchor="middle">K♠</text>
-            </motion.rect>
-            <motion.rect x="100" y="60" width="60" height="90" rx="6" fill={pal.secondary} opacity="0.95"
+            </motion.g>
+            <motion.g
+              transform="translate(100,60)"
               initial={{ opacity: 0 }}
               animate={ !prefersReduced && isHovered ? { opacity: [0, 1, 1] } : { opacity: 0 } }
-              transition={ !prefersReduced && isHovered ? { delay: 1, duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }>
+              transition={ !prefersReduced && isHovered ? { delay: 1, duration: 1, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' } : decoSpring }
+            >
+              <rect x="0" y="0" width="60" height="90" rx="6" fill={pal.secondary} opacity="0.95" />
               <text x="30" y="45" fontSize="12" fill="#000" textAnchor="middle">K♥</text>
-            </motion.rect>
+            </motion.g>
             <text x="90" y="160" fontSize="16" fill="#fff" textAnchor="middle">20</text>
           </motion.svg>
         );
@@ -517,12 +524,18 @@ const GameCard = ({ game }) => {
             </motion.div>
           
           {/* Animated gradient overlay (neon) - respects reduced motion */}
-          {!prefersReduced && (
+          {hovered && !prefersReduced && (
             <motion.div
-              initial={{ opacity: 0, backgroundPosition: '0% 50%' }}
-              animate={hovered ? { opacity: 1, backgroundPosition: '100% 50%' } : { opacity: 0 }}
-              transition={{ duration: 0.7, ease: 'easeOut' }}
-              style={{ position: 'absolute', inset: 0, zIndex: 9, pointerEvents: 'none', background: `linear-gradient(90deg, rgba(255,255,255,0.02), ${accentGlow}, rgba(255,255,255,0.02))`, backgroundSize: '200% 100%' }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              style={{
+                position: 'absolute', inset: 0, zIndex: 9, pointerEvents: 'none',
+                background: `radial-gradient(circle at 20% 30%, ${accentGlow.replace('0.30)', '0.20)')}, rgba(255,255,255,0.02) 40%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.02), transparent 30%)`,
+                backgroundSize: '120% 120%',
+                opacity: 0.45,
+                mixBlendMode: 'screen'
+              }}
             />
           )}
 
