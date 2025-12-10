@@ -1,0 +1,136 @@
+[
+  {
+    "id": "clicker-hero",
+    "title": "Clicker Hero",
+    "category": "Arcade",
+    "description": "A simple but addictive clicking game. Get the highest score!",
+    "thumbnail": "https://placehold.co/600x400/0EA5E9/ffffff?text=Clicker",
+    "highScore": 4280,
+    "players": "1 Player",
+    "controls": ["Mouse Click"],
+    "componentKey": "ClickerGame"
+  },
+  {
+    "id": "box-dodger",
+    "title": "Tetris",
+    "category": "Puzzle",
+    "description": "Stack falling blocks to clear lines. Use arrow keys to move and rotate pieces. Try for a high score!",
+    "thumbnail": "https://placehold.co/600x400/60A5FA/ffffff?text=Tetris",
+    "highScore": 0,
+    "controls": ["Arrow Keys"],
+    "players": "1 Player",
+    "componentKey": "Tetris"
+  },
+  {
+    "id": "math-quiz",
+    "title": "Speed Math",
+    "category": "Puzzle",
+    "description": "Solve the equations before time runs out.",
+    "thumbnail": "https://placehold.co/600x400/F59E0B/ffffff?text=Math",
+    "highScore": 0,
+    "controls": ["Keyboard Number Pad"],
+    "players": "1 Player",
+    "componentKey": "MathGame"
+  },
+{
+  "id": "snake",
+  "title": "Snake",
+  "description": "Grow your snake by eating apples, but don't crash into walls or yourself! Aim for the high score.",
+  "category": "Arcade",
+  "thumbnail": "https://placehold.co/600x400/000000/FFFFFF?text=Snake",
+  "highScore": 0,
+  "controls": ["Arrow Keys", "WASD"],
+  "componentKey": "SnakeGame",
+  "players": "1 Player"
+}
+  ,
+  {
+    "id": "memory-card",
+    "title": "Memory Card",
+    "category": "Card",
+    "description": "Match pairs of cards. Test your memory!",
+    "thumbnail": "https://placehold.co/600x400/08B7C1/ffffff?text=Memory",
+    "highScore": 0,
+    "controls": ["Mouse Click"],
+    "players": "1-2 Players",
+    "componentKey": "MemoryCard"
+  },
+  {
+    "id": "tic-tac-toe",
+    "title": "Tic-Tac-Toe",
+    "category": "Board",
+    "description": "Classic 2-player game. Get three in a row!",
+    "thumbnail": "https://placehold.co/600x400/FBBF24/ffffff?text=TicTacToe",
+    "highScore": 0,
+    "controls": ["Mouse Click"],
+    "componentKey": "TicTacToe",
+    "players": "1-2 Players"
+  },
+  {
+    "id": "rock-paper-scissors",
+    "title": "Rock Paper Scissors",
+    "category": "Card",
+    "description": "Play against the computer. Can you win?",
+    "thumbnail": "https://placehold.co/600x400/94A3B8/ffffff?text=RPS",
+    "highScore": 0,
+    "controls": ["Mouse Click"],
+    "componentKey": "RockPaperScissors",
+    "players": "1-2 Players"
+  },
+  {
+    "id": "hangman",
+    "title": "Hangman",
+    "category": "Word",
+    "description": "Guess the word before you run out of guesses.",
+    "thumbnail": "https://placehold.co/600x400/08B7C1/ffffff?text=Hangman",
+    "highScore": 0,
+    "controls": ["Keyboard"],
+    "componentKey": "Hangman",
+    "players": "Multiplayer"
+  },
+  {
+    "id": "minesweeper",
+    "title": "Minesweeper",
+    "category": "Puzzle",
+    "description": "Reveal all safe tiles without hitting a mine.",
+    "thumbnail": "https://placehold.co/600x400/EF4444/ffffff?text=Minesweeper",
+    "highScore": 0,
+    "controls": ["Mouse Click", "Right Click"],
+    "componentKey": "Minesweeper",
+    "players": "1 Player"
+  },
+  {
+    "id": "war-card-game",
+    "title": "War Card Game",
+    "category": "Card",
+    "description": "Draw cards and see who wins each round.",
+    "thumbnail": "https://placehold.co/600x400/0F172A/ffffff?text=War",
+    "highScore": 0,
+    "controls": ["Mouse Click"],
+    "componentKey": "WarCardGame",
+    "players": "1-2 Players"
+  },
+  {
+    "id": "blackjack",
+    "title": "Blackjack",
+    "category": "Card",
+    "description": "Try to beat the dealer without busting.",
+    "thumbnail": "https://placehold.co/600x400/065F46/ffffff?text=Blackjack",
+    "highScore": 0,
+    "controls": ["Mouse Click"],
+    "componentKey": "Blackjack",
+    "players": "1 Player"
+  }
+  ,
+  {
+    "id": "higher-lower",
+    "title": "Higher or Lower",
+    "category": "Card",
+    "description": "Guess if the next card is higher or lower. Win and the revealed card becomes yours for the next round.",
+    "thumbnail": "https://placehold.co/600x400/1a2233/ffffff?text=Higher+or+Lower",
+    "highScore": 0,
+    "controls": ["Mouse Click"],
+    "componentKey": "HigherLower",
+    "players": "1 Player"
+  }
+]

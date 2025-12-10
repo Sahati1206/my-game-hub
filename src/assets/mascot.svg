@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+      <feMerge>
+        <feMergeNode in="coloredBlur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <g filter="url(#glow)">
+    <rect x="8" y="8" width="48" height="48" rx="8" fill="#071822" stroke="#1f9fff" stroke-width="2"/>
+    <rect x="16" y="16" width="32" height="32" rx="4" fill="#0b2b3a" stroke="#8b5cf6" stroke-width="1.6"/>
+    <g fill="#00e6a8">
+      <rect x="22" y="22" width="4" height="4" rx="1"/>
+      <rect x="30" y="22" width="4" height="4" rx="1"/>
+      <rect x="22" y="30" width="4" height="4" rx="1"/>
+      <rect x="30" y="30" width="4" height="4" rx="1"/>
+    </g>
+  </g>
+  <style>
+    svg { shape-rendering: crispEdges; }
+    @media (prefers-reduced-motion: no-preference) {
+      g { transform-origin: 32px 32px; animation: mascot-bob 3s ease-in-out infinite; }
+      @keyframes mascot-bob { 0% { transform: translateY(0) } 50% { transform: translateY(-3px) scale(1.01) } 100% { transform: translateY(0) } }
+    }
+  </style>
+</svg>

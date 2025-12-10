@@ -1,0 +1,23 @@
+# Copilot Game Additions Log
+
+## December 8, 2025
+
+Added the following games and their logic:
+- Game5: Memory Card game (classic match pairs)
+- Game6: Tic-Tac-Toe (2 player)
+- Game7: Rock Paper Scissors (vs computer)
+- Game8: Hangman (guess the word)
+- Game9: Minesweeper (simple grid)
+- Game10: War Card Game (compare cards)
+- Game11: Blackjack Card Game (player vs dealer)
+
+Snake and Simon Says were swapped for War and Blackjack card games as requested.
+
+Each game is implemented in its own folder with a single React component, using simple logic and modern UI styles. All games are playable instantly, no downloads required.
+
+## December 8, 2025 (cont)
+
+- Planned: Add 2-player and 1-player modes to TicTacToe and other games. Will update game logic and UI to allow switching between modes.
+- Next steps: Implement mode selection and AI logic for 1-player mode, then apply to other games as needed.
+
+(Work in progress, will continue when you return!)

@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme variables (do not change existing color values; expose accents for new components) */
+:root {
+  --bg-default: #071822;
+  --fg-default: #E6E6E6;
+  --accent-1: #1f9fff; /* existing cyber blue hue */
+  --accent-2: #8b5cf6; /* purple neon */
+  --accent-3: #00e6a8; /* teal neon */
+  --muted: #A0A0A0;
+}
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+/* Base Styles */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #071822; /* Deeper Navy to match reference */
+  color: #E6E6E6; /* Soft Gray */
+  min-height: 100%;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A192F; /* Deep Navy */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1C1C1C; /* Charcoal */
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2A2A2A; /* Slightly lighter for hover */
+}
+
+/* Clean Utility Styles */
+@layer utilities {
+  .text-subtle {
+    color: #A0A0A0; /* Muted text tone */
+  }
+
+  .card-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); /* Soft, clean shadow */
+  }
+
+  .border-soft {
+    border: 1px solid #2A2A2A; /* Subtle border tone */
+  }
+
+  .hover-accent:hover {
+    color: #00BFFF; /* Clean Cyber Blue hover */
+    transition: color 0.2s ease-in-out;
+  }
+}
+
+/* Responsive helpers for game library and cards */
+.game-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 140px;
+}
+.game-card-thumb {
+  width: 34%;
+  min-width: 160px;
+  max-width: 280px;
+  overflow: hidden;
+}
+.game-card-content {
+  flex: 1 1 auto;
+  padding: 14px 16px;
+}
+
+.game-info-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+/* Library grid: wide cards on desktop, single column on small screens */
+.games-grid {
+  display: grid;
+  /* Desktop default: wide horizontal cards */
+  grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+  gap: 18px;
+}
+
+/* Accent utility for neon glow used by cards */
+.accent-glow {
+  --accent-color: rgba(14,165,233,0.16);
+  box-shadow: 0 10px 30px var(--accent-color);
+  transition: box-shadow 220ms ease, transform 220ms ease;
+}
+.accent-glow:hover {
+  box-shadow: 0 20px 60px var(--accent-color);
+}
+
+/* Neon synthwave grid backdrop used on hero / landing */
+.synth-grid {
+  position: relative;
+  background: linear-gradient(180deg, rgba(10,18,30,0.6), rgba(4,10,18,0.9));
+  overflow: hidden;
+}
+.synth-grid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px;
+  mix-blend-mode: overlay;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+/* Mascot utilities */
+.mascot-inline { display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px; }
+.mascot-glow { filter: drop-shadow(0 8px 18px rgba(31,159,255,0.12)); }
+
+/* Play overlay watermark mascot */
+.play-watermark { position: absolute; right: 18px; bottom: 18px; width: 120px; height: 120px; opacity: 0.06; pointer-events: none; transform: rotate(-8deg); }
+
+/* Tiny neon badge animations */
+.tag-pulse { box-shadow: 0 0 0 0 rgba(0,0,0,0); transition: box-shadow 350ms ease; }
+.tag-pulse:hover { box-shadow: 0 0 18px rgba(31,159,255,0.12); transform: translateY(-2px); }
+
+/* Favorite wiggle */
+.fav-wiggle { display:inline-block; transition: transform 180ms ease; }
+.fav-wiggle:hover { transform: rotate(-12deg) scale(1.06); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-inline svg { animation: none !important; }
+  .tag-pulse, .fav-wiggle { transition: none !important; transform: none !important; }
+}
+
+@keyframes accent-pulse {
+  0% { filter: drop-shadow(0 6px 12px rgba(0,0,0,0.25)); }
+  50% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+.accent-glow.animated { animation: accent-pulse 2.2s ease-in-out infinite; }
+
+/* Accessible focus styles */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid rgba(99,102,241,0.9);
+  outline-offset: 3px;
+}
+
+button, a, input, select, textarea {
+  transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+/* Respect reduced motion: disable non-essential animations/transitions */
+@media (prefers-reduced-motion: reduce) {
+  .accent-glow.animated { animation: none !important; }
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .game-info-grid {
+    grid-template-columns: 1fr;
+  }
+  .game-card {
+    flex-direction: column;
+    height: auto !important;
+    font-size: 0.95rem;
+  }
+  .game-card-thumb {
+    width: 100%;
+    min-width: auto;
+    height: 120px; /* slightly smaller on tablets */
+    max-width: 100%;
+  }
+  .game-card-content {
+    padding: 12px;
+  }
+  /* Use tighter, smaller columns on tablet/phone so cards stack compactly */
+  .games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-card-thumb { height: 90px; }
+  .game-card { font-size: 0.9rem; }
+  .game-card-content { padding: 10px; }
+  .game-card .card-image { transform-origin: center; }
+  .container { padding-left: 12px; padding-right: 12px; }
+  .games-grid { gap: 12px; }
+}
+
+/* Tweak card typography on small screens */
+@media (max-width: 480px) {
+  .game-card h3 { font-size: 1rem; margin-bottom: 6px; }
+  .game-card p { font-size: 0.82rem; }
+  .game-card .card-image { object-position: center center; }
+}
